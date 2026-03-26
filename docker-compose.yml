@@ -1,0 +1,31 @@
+
+services:
+  # --- The Database Container ---
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=carlift_db
+      - POSTGRES_USER=fareed
+      - POSTGRES_PASSWORD=strongpassword123
+
+  # --- The Django Container ---
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=carlift_db
+      - DB_USER=fareed
+      - DB_PASS=strongpassword123
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
